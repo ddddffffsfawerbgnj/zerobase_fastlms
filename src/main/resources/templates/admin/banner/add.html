@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>관리자 배너 관리 - 배너 등록</title>
+    <style>
+        .detail table {
+            width : 100%;
+            border-collapse:collapse;
+        }
+        .detail table th, .list table td {
+            text-align: center;
+            border:solid 1px #000;
+        }
+
+        .buttons {
+            margin-top : 20px;
+            text-align : center;
+        }
+
+        .buttons a, .buttons button {
+            border-width: 0;
+            background-color: transparent;
+            text-decoration: underline;
+            font-size: 14px;
+            line-height: 20px;
+            height: 20px;
+            color: blue;
+            cursor: pointer;
+        }
+
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.3.js"
+            integrity="sha256-nQLuAZGRRcILA+6dMBOvcRh5Pe310sBpanc6+QBmyVM=" crossorigin="anonymous"></script>
+    <script>
+        $(document).ready(function() {
+            $('#submitForm').on('submit', function() {
+                if(document.getElementById("postYn_true").checked) {
+                    document.getElementById("postYn_false").disabled = true;
+                }
+
+            });
+        });
+
+    </script>
+
+</head>
+<body>
+    <div th:replace="/fragments/layout.html :: fragment-admin-body-menu">
+    </div>
+    <h1> 배너 관리 - 배너 등록 </h1>
+    <div class="detail">
+
+        <form id = "submitForm" method = "post" enctype="multipart/form-data">
+            <table>
+                <tbody>
+                    <tr>
+                        <th>배너명</th>
+                        <td>
+                            <input th:value="${detail.subject}" type = "text" name = "subject" placeholder="배너명 입력" required/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>배너 파일</th>
+                        <td>
+                            <input type="file" name="file"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>강좌명</th>
+                        <td>
+                            <select id="searchCourseId" name = "courseId">
+                                <option th:if="${editMode eq false}" value="">전체 강좌</option>
+                                <option th:each="cl : ${courseList}"
+                                        th:selected="${#strings.equals(detail.courseSubject,cl.subject)}"
+                                        th:value="${cl.id}" th:text="${cl.subject}">프로그래밍</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>링크 주소</th>
+                        <td>
+                            <input th:value="${detail.clickedPath}" type = "text" name = "clickedPath" placeholder= "(/course/)입력 시 강좌상세" required/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>오픈 방법</th>
+                        <td>
+                            <select name="openMethod" required>
+                                <option value=""> 오픈 방법 선택 </option>
+                                <option th:selected="${#strings.equals(detail.openMethod, 'NEW')}" value="NEW">새창
+                                </option>
+                                <option th:selected="${#strings.equals(detail.openMethod, 'NOW')}" value="NOW">현재창
+                                </option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>정렬 순서</th>
+                        <td>
+                            <input th:value="${detail.sortValue}" type = "text" name = "sortValue" placeholder="정렬 순서 입력" required/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>공개 여부</th>
+                        <td>
+                            <input th:checked="${detail.postYn}" type = "checkbox" id="postYn_true" name="postYn" value = "true"/>
+                            <input type="hidden" name="postYn" value="false" id="postYn_false"/>
+                            <label th:for="${detail.postYn}">공개</label>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class ="buttons">
+                <button th:if="${!editMode}" type="submit">배너 등록 하기</button>
+                <button th:if="${editMode}" type="submit">배너 수정 하기</button>
+                <a href="/admin/banner/list.do">목록 이동</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
